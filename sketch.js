@@ -13,13 +13,15 @@ var totalNumOfnear_earth_objects;
 
 var img;
 
-function astroid(name, miss_distnaceMiles, hazardous, xVal, yVal) {
+function astroid(name, miss_distnaceMiles, hazardous, xVal, yVal, colorHaz) {
+
     this.Name = name;
     this.distance = miss_distnaceMiles;
     this.hazard = hazardous;
     this.xPos = xVal;
     this.yPos = yVal;
-};
+    this.colorHazard = colorHaz;
+} ;
 
 var astroids = [];
 
@@ -27,7 +29,7 @@ function preload() {
     //get todays date
     var today = new Date();
     var dd = today.getDate();
-    var mm = today.getMonth()+1; //January is 0
+    var mm = today.getMonth() + 1; //January is 0
     var yyyy = today.getFullYear();
 
     if(dd<10) {
@@ -75,9 +77,18 @@ function setup() {
                 distance: floor(nearEarthObjects[i].close_approach_data[0].miss_distance.lunar) ,
                 hazard: nearEarthObjects[i].is_potentially_hazardous_asteroid,
                 xPos: floor(random(20, innerWidth-20)),
-                yPos: floor(random(20, innerHeight-20))
+                yPos: floor(random(20, innerHeight-20)),
+                colorHazard: null
+
             });
+
+            if(astroids[i].hazard) {
+              astroids[i].colorHazard = color(255,0,0);
+            } else {
+              astroids[i].colorHazard = color(0,140,0);
+            }
         }
+
 
         console.log(astroids);
 
@@ -102,7 +113,7 @@ function draw() {
 
 
     //TODO: CREATE MAPS FOR ACTUAL DISTANCE
-    
+
     background(0);
     fill(255);
     stroke(0);
@@ -115,6 +126,7 @@ function draw() {
     image(img, innerWidth/4, innerHeight/3);
 
     for(var i = 0; i < astroids.length; i++) {
+        fill(astroids[i].colorHazard);
         ellipse(astroids[i].xPos , astroids[i].yPos, astroids[i].distance, astroids[i].distance );
 
         if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, astroids[i].distance)) {
@@ -129,6 +141,5 @@ function draw() {
 }
 
 function info() {
-    alert("Data is based from system time and date. \n\tData from NASA. \nInformation can be found at: https://api.nasa.gov/ \nCreated by: Hunter Jensen");
+    alert("Data is based from system time and date. \nData from NASA. \nInformation can be found at: https://api.nasa.gov/ \nCreated by: Hunter Jensen");
 }
-
