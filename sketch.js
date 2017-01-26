@@ -1,16 +1,22 @@
-
+/**
+ * 
+ * 
+ * Created by Hunter Jensen
+ * https://github.com/CaptainJensen
+ * 
+ * 
+ * 
+ */
+ 
 
 var API = 'https://api.nasa.gov/neo/rest/v1/feed?';
 var APIkey = 'LDfsZBTFBcfLBgRN2VkelfPpEQT90eav3ZJ3C3kl';
 
 var date;
 
-
 var astroidsData;
 
 var totalNumOfnear_earth_objects;
-
-var img;
 
 var centerX, centerY;
 
@@ -47,7 +53,6 @@ function preload() {
     var url = API + 'start_date=' + date + '&end_date=' + date + '&detailed=false&api_key=' + APIkey;
     console.log(url);
     loadJSON(url, gotData);
-    //img = loadImage("world.jpg");
 }
 
 function gotData(data) {
@@ -67,11 +72,7 @@ function setup() {
 
     if (astroidsData) {
         var nearEarthObjects = astroidsData.near_earth_objects[date];
-
-        // var missDistance = nearEarthObjects[i].close_approach_data.miss_distance.miles;
-        // var astroidName = nearEarthObjects[i].name;
-        // var hazarddanger = nearEarthObjects[i].is_potentially_hazardous_asteroid;
-      
+        
         for (var i = 0; i < totalNumOfnear_earth_objects; i++) {
             astroids.push({
                 Name: nearEarthObjects[i].name,
@@ -85,13 +86,12 @@ function setup() {
               
             });
             
+        
+            //TODO: backwards for initial value so the smallest is the closest
+            //TODO: find max value and min value and set set it to that max so it doesent go off screen
+            astroids[i].xPos = map(astroids[i].distance, 200, 0, random(0,width) , width/2-100);
+            astroids[i].yPos = map(astroids[i].distance, 200, 0, random(0,height) , height/2-100);
           
-          
-            //astroids[i].xPos = astroids[i].vec.x * map(astroids[i].distance, 0, 100, 100, width-100);
-            //astroids[i].yPos = astroids[i].vec.y * map(astroids[i].distance, 0, 100, 100, height-100);
-            
-            astroids[i].xPos = abs(map(astroids[i].distance, 0, 100, width, random(100,width-100)));
-            astroids[i].yPos = abs(map(astroids[i].distance, 0, 100, height, random(100,height-100)));
             
             if(astroids[i].hazard) {
               astroids[i].colorHazard = color(255,0,0);
@@ -102,7 +102,7 @@ function setup() {
         
         
         centerX = width/2;
-        centerY = height/2 + 400;
+        centerY = height/2;
         
         
 
@@ -128,10 +128,6 @@ function draw() {
     //also slows down time therefore removed seconds from clock??
     //frameRate(10);
 
-
-
-    
-
     background(0);
     fill(255);
     stroke(0);
@@ -141,27 +137,26 @@ function draw() {
     text("Current Near Earth Objects: " + totalNumOfnear_earth_objects, 10, 30);
     text(hour() + ':' + minute() + ':' + second(), 10, 60);
 
-    //image(img, innerWidth/4, innerHeight/3);
 
     for(var i = 0; i < astroids.length; i++) {
         fill(astroids[i].colorHazard);
         stroke(255);
-        line(astroids[i].xPos , astroids[i].yPos, innerWidth-100, innerHeight-100);
+        line(astroids[i].xPos , astroids[i].yPos, centerX, centerY);
         stroke(0);
         
         ellipse(astroids[i].xPos , astroids[i].yPos, floor(astroids[i].distance)+10, floor(astroids[i].distance)+10 );
 
 
-        if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, astroids[i].distance)) {
-            fill(7,180,7);
+        if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, floor(astroids[i].distance))) {
+            fill(255);
             textSize(14);
             text(astroids[i].Name, astroids[i].xPos, astroids[i].yPos);
-            fill(255);
         }
     }
-    textSize(32);
-    text("Earth", innerWidth-100, innerHeight-100);
-
+    
+    fill(0,255,0);
+    textSize(16);
+    text("Earth", centerX, centerY);
     //noLoop();
 }
 
