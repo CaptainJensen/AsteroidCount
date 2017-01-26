@@ -147,13 +147,14 @@ function draw() {
         line(astroids[i].xPos , astroids[i].yPos, centerX, centerY);
         stroke(0);
         
+        //added 10 to fix when distance is 0
         ellipse(astroids[i].xPos , astroids[i].yPos, floor(astroids[i].distance)+10, floor(astroids[i].distance)+10 );
 
 
         if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, floor(astroids[i].distance)+10)) {
             fill(255);
             textSize(14);
-            text(astroids[i].Name + "\n" + floor(astroids[i].distance) + " LD", astroids[i].xPos, astroids[i].yPos);
+            text(astroids[i].Name + "\n~" + floor(astroids[i].distance) + " LD", mouseX, mouseY-20);
         }
     }
     
