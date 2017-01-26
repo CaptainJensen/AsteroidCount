@@ -10,10 +10,11 @@ var astroidsData;
 
 var totalNumOfnear_earth_objects;
 
-
 var img;
 
-function astroid(name, miss_distnaceMiles, hazardous, xVal, yVal, colorHaz) {
+var centerX, centerY;
+
+function astroid(name, miss_distnaceMiles, hazardous,xVal, yVal, colorHaz) {
 
     this.Name = name;
     this.distance = miss_distnaceMiles;
@@ -21,7 +22,8 @@ function astroid(name, miss_distnaceMiles, hazardous, xVal, yVal, colorHaz) {
     this.xPos = xVal;
     this.yPos = yVal;
     this.colorHazard = colorHaz;
-} ;
+    
+} 
 
 var astroids = [];
 
@@ -45,13 +47,14 @@ function preload() {
     var url = API + 'start_date=' + date + '&end_date=' + date + '&detailed=false&api_key=' + APIkey;
     console.log(url);
     loadJSON(url, gotData);
-    img = loadImage("world.jpg");
+    //img = loadImage("world.jpg");
 }
 
 function gotData(data) {
     astroidsData = data;
 
 }
+
 
 
 function setup() {
@@ -68,31 +71,46 @@ function setup() {
         // var missDistance = nearEarthObjects[i].close_approach_data.miss_distance.miles;
         // var astroidName = nearEarthObjects[i].name;
         // var hazarddanger = nearEarthObjects[i].is_potentially_hazardous_asteroid;
-
-
-        //nearEarthObjects[i].close_approach_data.miss_distance
+      
         for (var i = 0; i < totalNumOfnear_earth_objects; i++) {
             astroids.push({
                 Name: nearEarthObjects[i].name,
-                distance: floor(nearEarthObjects[i].close_approach_data[0].miss_distance.lunar) ,
+                distance: nearEarthObjects[i].close_approach_data[0].miss_distance.lunar,
                 hazard: nearEarthObjects[i].is_potentially_hazardous_asteroid,
-                xPos: floor(random(20, innerWidth-20)),
-                yPos: floor(random(20, innerHeight-20)),
+                xPos: null,
+                yPos: null,
+                //yPos: floor(random(20, innerHeight-20)),
+                //xPos: floor(random(20, innerWidth-20)),
                 colorHazard: null
-
+              
             });
-
+            
+          
+          
+            //astroids[i].xPos = astroids[i].vec.x * map(astroids[i].distance, 0, 100, 100, width-100);
+            //astroids[i].yPos = astroids[i].vec.y * map(astroids[i].distance, 0, 100, 100, height-100);
+            
+            astroids[i].xPos = abs(map(astroids[i].distance, 0, 100, width, random(100,width-100)));
+            astroids[i].yPos = abs(map(astroids[i].distance, 0, 100, height, random(100,height-100)));
+            
             if(astroids[i].hazard) {
               astroids[i].colorHazard = color(255,0,0);
             } else {
               astroids[i].colorHazard = color(0,140,0);
             }
         }
-
+        
+        
+        centerX = width/2;
+        centerY = height/2 + 400;
+        
+        
 
         console.log(astroids);
 
     }
+
+    
 
 
     button = createButton('Info');
@@ -112,22 +130,27 @@ function draw() {
 
 
 
-    //TODO: CREATE MAPS FOR ACTUAL DISTANCE
+    
 
     background(0);
     fill(255);
     stroke(0);
-
+    
+    
     textSize(32);
-
     text("Current Near Earth Objects: " + totalNumOfnear_earth_objects, 10, 30);
     text(hour() + ':' + minute() + ':' + second(), 10, 60);
 
-    image(img, innerWidth/4, innerHeight/3);
+    //image(img, innerWidth/4, innerHeight/3);
 
     for(var i = 0; i < astroids.length; i++) {
         fill(astroids[i].colorHazard);
-        ellipse(astroids[i].xPos , astroids[i].yPos, astroids[i].distance, astroids[i].distance );
+        stroke(255);
+        line(astroids[i].xPos , astroids[i].yPos, innerWidth-100, innerHeight-100);
+        stroke(0);
+        
+        ellipse(astroids[i].xPos , astroids[i].yPos, floor(astroids[i].distance)+10, floor(astroids[i].distance)+10 );
+
 
         if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, astroids[i].distance)) {
             fill(7,180,7);
@@ -136,6 +159,8 @@ function draw() {
             fill(255);
         }
     }
+    textSize(32);
+    text("Earth", innerWidth-100, innerHeight-100);
 
     //noLoop();
 }
