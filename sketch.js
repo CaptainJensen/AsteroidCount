@@ -87,6 +87,9 @@ function setup() {
             });
             
         
+        
+        
+        
             //TODO: backwards for initial value so the smallest is the closest
             //TODO: find max value and min value and set set it to that max so it doesent go off screen
             astroids[i].xPos = map(astroids[i].distance, 200, 0, random(0,width) , width/2-100);
@@ -147,10 +150,10 @@ function draw() {
         ellipse(astroids[i].xPos , astroids[i].yPos, floor(astroids[i].distance)+10, floor(astroids[i].distance)+10 );
 
 
-        if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, floor(astroids[i].distance))) {
+        if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, floor(astroids[i].distance)+10)) {
             fill(255);
             textSize(14);
-            text(astroids[i].Name, astroids[i].xPos, astroids[i].yPos);
+            text(astroids[i].Name + "\n" + floor(astroids[i].distance) + " LD", astroids[i].xPos, astroids[i].yPos);
         }
     }
     
