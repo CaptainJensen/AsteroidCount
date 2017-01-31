@@ -111,9 +111,13 @@ function setup() {
     }
 
     
-    button = createButton('Info');
-    button.position(10, 70);
-    button.mousePressed(info);
+    buttonInfo = createButton('Info');
+    buttonInfo.position(10, 70);
+    buttonInfo.size(40);
+    buttonInfo.mousePressed(info);
+    
+    buttonSource = createA("https://github.com/CaptainJensen/AsteroidCount", "Source");
+    buttonSource.position(10, height-20);
   
 }
 
@@ -184,3 +188,4 @@ function drawList() {
 function info() {
     alert("Data is based from system time and date. \nData from NASA. \nInformation can be found at: https://api.nasa.gov/ \nCreated by: Hunter Jensen");
 }
+
