@@ -20,11 +20,12 @@ var totalNumOfnear_earth_objects;
 
 var centerX, centerY;
 
-function astroid(name, miss_distnaceMiles, hazardous,xVal, yVal, colorHaz) {
+function astroid(name, miss_distnaceMiles, hazardous, NASAUrl, xVal, yVal, colorHaz) {
 
     this.Name = name;
     this.distance = miss_distnaceMiles;
     this.hazard = hazardous;
+    this.nasaUrl = NASAUrl
     this.xPos = xVal;
     this.yPos = yVal;
     this.colorHazard = colorHaz;
@@ -65,7 +66,6 @@ function gotData(data) {
 function setup() {
 
     createCanvas(innerWidth, innerHeight);
-    background(0);
 
     totalNumOfnear_earth_objects = astroidsData.element_count;
 
@@ -78,6 +78,7 @@ function setup() {
                 Name: nearEarthObjects[i].name,
                 distance: nearEarthObjects[i].close_approach_data[0].miss_distance.lunar,
                 hazard: nearEarthObjects[i].is_potentially_hazardous_asteroid,
+                nasaUrl: nearEarthObjects[i].nasa_jpl_url,
                 xPos: null,
                 yPos: null,
                 //yPos: floor(random(20, innerHeight-20)),
@@ -85,10 +86,6 @@ function setup() {
                 colorHazard: null
               
             });
-            
-        
-        
-        
         
             //TODO: backwards for initial value so the smallest is the closest
             //TODO: find max value and min value and set set it to that max so it doesent go off screen
@@ -114,15 +111,10 @@ function setup() {
     }
 
     
-
-
     button = createButton('Info');
     button.position(10, 70);
     button.mousePressed(info);
-
-
-
-
+  
 }
 
 
@@ -130,38 +122,63 @@ function draw() {
 
     //also slows down time therefore removed seconds from clock??
     //frameRate(10);
+    drawAsteriods();
+    drawList();
 
-    background(0);
-    fill(255);
-    stroke(0);
+
+
+}
+
+function drawAsteriods() {
+  background(0);
+  fill(255);
+  stroke(0);
+  textSize(32);
+  text("Current Near Earth Objects: " + totalNumOfnear_earth_objects, 10, 30);
+  text(day() + '/' + month() + '/' + year() + ' - ' + hour() + ':' + minute() + ':' + second(), 10, 60);
+
+
+
+  for(var j = 0; j < astroids.length; j++) {
     
-    
-    textSize(32);
-    text("Current Near Earth Objects: " + totalNumOfnear_earth_objects, 10, 30);
-    text(hour() + ':' + minute() + ':' + second(), 10, 60);
-
-
-    for(var i = 0; i < astroids.length; i++) {
-        fill(astroids[i].colorHazard);
-        stroke(255);
-        line(astroids[i].xPos , astroids[i].yPos, centerX, centerY);
-        stroke(0);
-        
-        //added 10 to fix when distance is 0
-        ellipse(astroids[i].xPos , astroids[i].yPos, floor(astroids[i].distance)+10, floor(astroids[i].distance)+10 );
-
-
-        if ( collidePointCircle(mouseX, mouseY, astroids[i].xPos, astroids[i].yPos, floor(astroids[i].distance)+10)) {
-            fill(255);
-            textSize(14);
-            text(astroids[i].Name + "\n~" + floor(astroids[i].distance) + " LD", mouseX, mouseY-20);
+      fill(astroids[j].colorHazard);
+      stroke(255);
+      line(astroids[j].xPos , astroids[j].yPos, centerX, centerY);
+      stroke(0);
+      
+      //added 10 to fix when distance is 0
+      ellipse(astroids[j].xPos , astroids[j].yPos, floor(astroids[j].distance)+10, floor(astroids[j].distance)+10 );
+      
+      if ( collidePointCircle(mouseX, mouseY, astroids[j].xPos, astroids[j].yPos, floor(astroids[j].distance)+10)) {
+        fill(255);
+        textSize(14);
+        text(astroids[j].Name + "\n~" + floor(astroids[j].distance) + " LD", mouseX, mouseY-20);
+        if(mouseIsPressed) {
+          //window.location.replace(astroids[j].nasaURL);
+          window.open(astroids[j].nasaUrl);
         }
-    }
+      }
     
-    fill(0,255,0);
-    textSize(16);
-    text("Earth", centerX, centerY);
-    //noLoop();
+  }
+  
+  fill(0,255,0);
+  textSize(16);
+  text("Earth", centerX, centerY);
+  //noLoop();
+
+
+}
+
+
+
+function drawList() {
+  fill(255,140,0);
+  textSize(20);
+  var list = "";
+  for(var j = 0; j < astroids.length; j++) {
+    list+= j+1 + ") " + astroids[j].Name + " " + floor(astroids[j].distance) + " LD \n\tHazardous: " + astroids[j].hazard + "\n";
+  }
+  text(list, 10, 110);
 }
 
 function info() {
